@@ -1,0 +1,600 @@
+:root {
+    --primary-color: #fbfaf4;
+    --accent-color: #ff665a;
+    --bg-overlay: rgba(0, 0, 10, 0.3);
+    --font-main: 'Avenir Next', 'Avenir', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--primary-color);
+    background-color: #0c0c0c;
+    overflow-x: hidden;
+}
+
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-image: url('assets/background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* 'cover' scales the image proportionally to fill the container without stretching or compressing it. This is usually the best approach for backgrounds while maintaining aspect ratio. */
+    background-position: center bottom;
+}
+
+/* Fallback for "Apply it as it is" if user specifically meant 'contain' or 'auto' (though those often leave white space) */
+/* .hero-section { background-size: auto; } */
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0, 15, 15, 0.2) 0%, rgba(0, 5, 5, 0.5) 100%);
+    z-index: 1;
+}
+
+.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem 2.2rem 2.22rem 2.2rem;
+    /* Right and left now equal (2.2rem) for symmetry */
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    z-index: 10;
+}
+
+.logo {
+    position: fixed;
+    top: 1.5rem;
+    left: 2.2rem;
+    z-index: 1000;
+}
+
+.logo img {
+    height: 31.5px;
+    /* Reduced by another 10% from 35px */
+    display: block;
+}
+
+.nav-cta {
+    position: fixed;
+    top: 1.5rem;
+    right: 2.2rem;
+    z-index: 1000;
+    background-color: #fbfaf4;
+    color: #091717;
+    text-decoration: none;
+    height: 38.1px;
+    padding: 0 1.2rem 0 0.3rem;
+    /* Increased right padding to push text away from edge */
+    border-radius: 14px;
+    /* Rectangular with slightly rounded edges */
+    font-family: 'Avenir Next', 'Avenir', sans-serif;
+    font-weight: 400;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    /* Arrow closer to text */
+    transition: transform 0.4s ease;
+    cursor: pointer;
+}
+
+.nav-cta:hover {
+    transform: scale(1.05);
+    /* Subtly scale up */
+}
+
+.arrow-icon {
+    width: 140px;
+    /* Lengthened to reach where rounding begins */
+    height: 18px;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 5;
+    max-width: 1000px;
+    padding: 0 40px;
+    margin-top: -8vh;
+    /* Shifted up from -5vh */
+}
+
+.hero-title {
+    font-family: "YuMincho + 36p Kana ExtraBold", "YuMincho + 36p Kana", "Yu Mincho + 36p Kana ExtraBold", "Yu Mincho + 36p Kana", "Yu Mincho", "Zen Old Mincho", serif;
+    font-weight: 800;
+    /* ExtraBold */
+    font-size: 6.5rem;
+    /* Fixed size as requested */
+    color: #fbfaf4;
+    line-height: 1.05;
+    margin-bottom: 6.5rem;
+    /* Increased gap for visual balance */
+    letter-spacing: -0.08em;
+    /* Very tight spacing */
+    /* Tighter letter spacing */
+    text-transform: none;
+    text-align: center;
+}
+
+.hero-subtext {
+    font-family: 'Avenir Next', 'Avenir', sans-serif;
+    font-weight: 400;
+    font-size: 1.5rem;
+    color: #fbfaf4;
+    opacity: 0.9;
+    line-height: 1.6;
+    margin-bottom: 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.waitlist-form {
+    display: none;
+    /* Hidden to match reference image exactly */
+}
+
+input[type="email"] {
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: white;
+    width: 100%;
+    max-width: 350px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input[type="email"]:focus {
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.cta-button {
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    border: none;
+    background: var(--primary-color);
+    color: black;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.cta-button:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 1.2s ease forwards;
+}
+
+.fade-in-delayed {
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards 0.5s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Section 2 */
+.section-2 {
+    position: relative;
+    width: 100%;
+    min-height: auto;
+    /* Allow extended scrolling */
+    background-image: url('assets/section2-bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    /* Create parallax/fixed effect */
+}
+
+.scrolling-text-container {
+    width: 70%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding-top: 50vh;
+    /* Start first line at vertical center */
+    padding-bottom: 40vh;
+    /* Allow text to scroll completely off screen */
+    position: relative;
+    z-index: 10;
+}
+
+.text-block {
+    margin-bottom: 4rem;
+    /* Spacing between blocks */
+    transition: opacity 0.1s linear, transform 0.1s linear;
+    /* Smooth transition */
+    scroll-snap-align: center;
+    opacity: 0;
+    /* Controlled by JS */
+    text-align: center;
+}
+
+
+
+.scroll-text {
+    font-family: "YuMincho + 36p Kana", "Yu Mincho", "Zen Old Mincho", serif;
+    font-weight: 400;
+    font-size: 2rem;
+    letter-spacing: -0.05em;
+    /* Tight spacing */
+    color: #fbfaf4;
+    margin-bottom: 4rem;
+    /* Default spacing within block if not tight */
+    text-transform: lowercase;
+}
+
+.scroll-text.tight {
+    margin-bottom: 0;
+}
+
+.serif-font {
+    font-family: "YuMincho + 36p Kana", "Yu Mincho", "Zen Old Mincho", serif;
+}
+
+.highlight-text {
+    color: #ff665a;
+    font-weight: 900;
+}
+
+.text-large {
+    font-size: 2.5rem;
+}
+
+/* Bottom CTA initially hidden */
+#cta-bottom {
+    top: 87%;
+    bottom: auto;
+    right: 2.2rem;
+    opacity: 0;
+    filter: blur(10px);
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Receipt Animation Styles */
+.receipt-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    pointer-events: none;
+    /* Let scroll pass through mostly, adjusted via JS */
+    overflow: hidden;
+}
+
+.receipt-paper {
+    position: relative;
+    width: 44%;
+    /* 28% left + 44% width = 72% right edge approx */
+    margin-left: 0;
+    /* Centered logic handled by flex or JS, strictly 28% from left: */
+    left: 28%;
+    /* Fixed positioning logic relative to container width */
+    margin-left: -14%;
+    /* Adjust if using center alignment, but here we want pure % positioning */
+    /* Actually better to use absolute left for strict '28% from left' requirement */
+    position: absolute;
+    top: 100vh;
+    /* Start offscreen */
+    min-height: 150vh;
+    /* Long paper */
+    background-color: #fbfaf4;
+    filter: url(#paper-noise);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform-origin: bottom center;
+    padding-bottom: 10rem;
+    pointer-events: auto;
+}
+
+.perforation-edge {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background-color: #fbfaf4;
+    -webkit-mask-image: radial-gradient(circle at 10px bottom, transparent 8px, black 8.5px);
+    -webkit-mask-position: -10px bottom;
+    -webkit-mask-size: 20px 20px;
+    -webkit-mask-repeat: repeat-x;
+    mask-image: radial-gradient(circle at 10px bottom, transparent 8px, black 8.5px);
+    mask-position: -10px bottom;
+    mask-size: 20px 20px;
+    mask-repeat: repeat-x;
+    filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.1));
+    /* Internal shadow approximation */
+}
+
+/* Add a pseudo-element for the internal shadow line if filter doesn't suffice */
+.perforation-edge::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.manifesto-content {
+    padding: 6rem 4rem 4rem 4rem;
+    color: #091717;
+    font-family: "YuMincho + 36p Kana ExtraBold", "YuMincho + 36p Kana", "Yu Mincho", serif;
+    text-align: center;
+}
+
+.manifesto-content h2 {
+    font-size: 3rem;
+    margin-bottom: 3rem;
+    font-weight: 800;
+}
+
+.manifesto-content p {
+    font-size: 1.5rem;
+    line-height: 2;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.nudge-arrow {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.4;
+    animation: floatArrow 2s ease-in-out infinite;
+}
+
+@keyframes floatArrow {
+
+    0%,
+    100% {
+        transform: translate(-50%, 0);
+    }
+
+    50% {
+        transform: translate(-50%, 10px);
+    }
+}
+
+.launch-reveal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+    opacity: 0;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.launch-reveal h1 {
+    font-family: "YuMincho + 36p Kana ExtraBold", serif;
+    font-size: 7rem;
+    color: #fbfaf4;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+}
+
+/* Responsiveness */
+@media (max-width: 600px) {
+    .waitlist-form {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    input[type="email"] {
+        max-width: 100%;
+    }
+}
+
+/* Section 3 - Launch Reveal */
+.section-3 {
+    min-height: 100vh;
+    width: 100%;
+    background-image: url('assets/section3-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+}
+
+#launch-content-wrapper {
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.launch-title {
+    font-family: "YuMincho + 36p Kana", "Yu Mincho", "Zen Old Mincho", serif;
+    font-weight: 800;
+    font-size: 6rem;
+    color: #091717;
+    letter-spacing: -0.08em;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    transform: translateY(-3vh);
+}
+
+.launch-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.email-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+#launch-email {
+    background: transparent !important;
+    border: none;
+    border-bottom: 1px solid rgba(9, 23, 23, 0.6);
+    border-radius: 0;
+    font-family: 'Avenir Next', 'Avenir', sans-serif;
+    font-size: 1.2rem;
+    color: #091717;
+    padding: 0.8rem 0;
+    width: 300px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s ease;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+#launch-email::placeholder {
+    color: rgba(9, 23, 23, 0.6);
+}
+
+#launch-email:focus,
+#launch-email.has-text {
+    border-color: #ff665a;
+    background: transparent;
+}
+
+/* Override .nav-cta fixed positioning for this specific element */
+#section-3 .nav-cta-scene {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 1.5rem;
+    perspective: 1000px;
+    width: auto;
+    height: 38.1px;
+    /* Match nav-cta height */
+    cursor: pointer;
+}
+
+/* Ensure inner nav-cta elements don't inherit fixed offsets */
+#section-3 .nav-cta {
+    position: static;
+    /* or relative/absolute as handled by cta-face */
+    top: auto;
+    right: auto;
+    left: auto;
+    margin: 0;
+}
+
+#launch-cta-flipper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    transform-origin: center center;
+}
+
+#section-3 .nav-cta-scene.flipped #launch-cta-flipper {
+    transform: rotateX(-180deg);
+}
+
+.cta-face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+}
+
+/* Front Face: Inherits .nav-cta styles roughly, but we need to ensure bg is set here */
+.cta-face.front {
+    position: relative;
+    /* Determine size of container */
+    background-color: #fbfaf4;
+    color: #091717;
+}
+
+/* Back Face: Success State */
+.cta-face.back {
+    padding: 0 !important;
+    background-color: #ff665a;
+    color: #fbfaf4;
+    transform: rotateX(-180deg);
+    font-family: 'Avenir Next', 'Avenir', sans-serif;
+    font-weight: 400;
+    font-size: 0.95rem;
+}
+
+/* Animation classes */
+.blur-in-animation {
+    animation: blurIn 0.8s ease forwards;
+}
+
+@keyframes blurIn {
+    0% {
+        opacity: 0;
+        filter: blur(10px);
+        transform: translateY(10px) scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0) scale(1);
+    }
+}
