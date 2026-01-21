@@ -615,6 +615,14 @@ input[type="email"]:focus {
         left: 1.5rem;
     }
 
+    .hero-section {
+        min-height: 100vh;
+        background-image: url('assets/hero-mobile.png');
+        background-position: center top;
+        z-index: 10;
+        /* Ensure it's above fixed pseudo-bg of section-2 */
+    }
+
     .section-2 {
         background-image: none;
         isolation: isolate;
@@ -624,11 +632,11 @@ input[type="email"]:focus {
     .section-2::before {
         content: "";
         position: fixed;
-        top: -10vh;
+        top: 0;
         left: 0;
         width: 100%;
-        height: 120vh;
-        background-image: url('assets/section2-bg.png');
+        height: 100vh;
+        background-image: url('assets/section2-mobile.png');
         background-size: cover;
         background-position: center;
         z-index: -1;
