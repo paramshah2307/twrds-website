@@ -101,9 +101,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const vanishPoint = isMobile ? vh * 0.16 : vh * 0.14;
         const featherZone = vh * 0.25;
         const offset = vanishPoint - rect.top;
-        const mask = `linear-gradient(to bottom, 
-            rgba(0,0,0,0) ${offset}px, 
-            rgba(0,0,0,1) ${offset + featherZone}px)`;
+
+        let mask;
+        if (isMobile) {
+            // Symmetric 4-point mask for mobile
+            // Top: fade starts at vanishPoint, ends at vanishPoint + featherZone
+            // Bottom: fade starts at vh - vanishPoint, ends at vh - vanishPoint - featherZone
+            const topStart = offset;
+            const topEnd = offset + featherZone;
+            const bottomEnd = offset + (vh - vanishPoint);
+            const bottomStart = bottomEnd - featherZone;
+
+            mask = `linear-gradient(to bottom, 
+                rgba(0,0,0,0) ${topStart}px, 
+                rgba(0,0,0,1) ${topEnd}px,
+                rgba(0,0,0,1) ${bottomStart}px,
+                rgba(0,0,0,0) ${bottomEnd}px)`;
+        } else {
+            // Standard top-only mask for desktop
+            mask = `linear-gradient(to bottom, 
+                rgba(0,0,0,0) ${offset}px, 
+                rgba(0,0,0,1) ${offset + featherZone}px)`;
+        }
+
         scroller.style.webkitMaskImage = mask;
         scroller.style.maskImage = mask;
 
