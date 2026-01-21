@@ -200,34 +200,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- 5. Mobile Scroll Friction (Dampening) ---
-    const initMobileFriction = () => {
-        const isMobile = window.innerWidth <= 768;
-        if (!isMobile) return;
-
-        let lastTouchY = 0;
-        const frictionFactor = 0.5; // Dampen scroll by 50%
-
-        window.addEventListener('touchstart', (e) => {
-            lastTouchY = e.touches[0].clientY;
-        }, { passive: false });
-
-        window.addEventListener('touchmove', (e) => {
-            const currentTouchY = e.touches[0].clientY;
-            const deltaY = lastTouchY - currentTouchY;
-
-            // Manually scroll by dampened amount
-            window.scrollBy(0, deltaY * frictionFactor);
-
-            lastTouchY = currentTouchY;
-            e.preventDefault(); // Stop standard "slippery" scroll
-        }, { passive: false });
-    };
-
     // --- Execution ---
     initSection2();
     initLaunchLogic();
-    initMobileFriction();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', () => {
         if (scroller) cacheWordOffsets();
