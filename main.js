@@ -1,132 +1,239 @@
-// CTA and Hero Text Scroll Animation
+// twrds-website: main.js
 document.addEventListener('DOMContentLoaded', () => {
     const heroTitle = document.querySelector('.hero-title');
     const heroSubtext = document.querySelector('.hero-subtext');
-
-    // Ensure critical elements exist before running logic
-    if (!heroTitle || !heroSubtext) return;
-
-    window.addEventListener('scroll', () => {
-        const scrollY = window.scrollY;
-        const viewportHeight = window.innerHeight;
-
-        // Hero Text Animation
-        if (heroTitle && heroSubtext) {
-            const startFade = viewportHeight * 0.25; // start at 25%
-            const endFade = viewportHeight * 0.75;   // end at 75%
-
-            let textProgress = 0;
-            if (scrollY > startFade) {
-                textProgress = Math.min((scrollY - startFade) / (endFade - startFade), 1);
-            }
-
-            // Opacity 1 -> 0, Blur 0 -> 10px
-            const opacity = 1 - textProgress;
-            const blur = textProgress * 10;
-
-            heroTitle.style.opacity = opacity;
-            heroTitle.style.filter = `blur(${blur}px)`;
-
-            heroSubtext.style.opacity = opacity;
-            heroSubtext.style.filter = `blur(${blur}px)`;
-        }
-
-        // Scrollytelling Text Animation
-        const scrollBlocks = document.querySelectorAll('.text-block');
-        scrollBlocks.forEach(block => {
-            const rect = block.getBoundingClientRect();
-            const elementCenter = rect.top + rect.height / 2;
-            const viewportCenter = window.innerHeight / 2;
-            const viewportHeight = window.innerHeight;
-
-            // Define zones
-            const focusStart = viewportHeight * 0.40;
-            const focusEnd = viewportHeight * 0.50;
-            let visibleStart = viewportHeight * 0.15;
-            const visibleEnd = viewportHeight * 0.80;
-
-            // Apply custom fade logic for specific blocks
-            if (block.classList.contains('early-fade')) {
-                visibleStart = viewportHeight * 0.35; // Fade out earlier when scrolling up
-            }
-
-            // Calculate opacity and scale
-            let opacity = 0;
-            let scale = 0.8;
-
-            if (elementCenter >= focusStart && elementCenter <= focusEnd) {
-                // In focus zone
-                opacity = 1;
-                scale = 1;
-            } else if (elementCenter > visibleStart && elementCenter < focusStart) {
-                // Upper fade zone (variable start to 40%)
-                const progress = (elementCenter - visibleStart) / (focusStart - visibleStart);
-                opacity = progress;
-                scale = 0.8 + (progress * 0.2); // Scale from 0.8 to 1
-            } else if (elementCenter > focusEnd && elementCenter < visibleEnd) {
-                // Lower fade zone (55% to 85%)
-                const progress = (visibleEnd - elementCenter) / (visibleEnd - focusEnd);
-                opacity = progress;
-                scale = 0.8 + (progress * 0.2); // Scale from 0.8 to 1
-            }
-
-            block.style.opacity = opacity;
-            block.style.transform = `scale(${scale})`;
-            block.style.filter = 'none';
-        });
-
-    });
-
-    // Email Validation Logic
+    const section2 = document.getElementById('trigger-section-2');
+    const scroller = document.querySelector('.scrolling-text-container');
     const launchEmailInput = document.getElementById('launch-email');
     const launchCta = document.getElementById('launch-cta');
+    const section3 = document.getElementById('section-3');
+    const navbarLogo = document.querySelector('.navbar .logo');
+    const navbarCta = document.querySelector('.navbar .nav-cta');
 
-    if (launchEmailInput && launchCta) {
-        // Validation check helper
-        const isValidEmail = (email) => {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        };
+    // --- 1. Hero Text & Shared Scroll State ---
+    let ticking = false;
+
+    const updateHeroAnimation = (scrollY, vh) => {
+        if (!heroTitle || !heroSubtext) return;
+        const startFade = vh * 0.25;
+        const endFade = vh * 0.75;
+
+        let textProgress = 0;
+        if (scrollY > startFade) {
+            textProgress = Math.min((scrollY - startFade) / (endFade - startFade), 1);
+        }
+
+        const opacity = 1 - textProgress;
+        const blur = textProgress * 10;
+
+        heroTitle.style.opacity = opacity;
+        heroTitle.style.filter = `blur(${blur}px)`;
+        heroSubtext.style.opacity = opacity;
+        heroSubtext.style.filter = `blur(${blur}px)`;
+    };
+
+    // --- 2. Section 2 Initialization & Effects ---
+    let wordData = [];
+
+    const initSection2 = () => {
+        if (!section2 || !scroller) return;
+
+        // Wrap words once
+        const scrollTexts = scroller.querySelectorAll('.scroll-text');
+        scrollTexts.forEach(p => {
+            if (p.querySelector('.word')) return;
+
+            const wrapNode = (node, isAccent = false) => {
+                if (node.nodeType === 3) { // Text node
+                    const text = node.textContent;
+                    const words = text.split(/(\s+)/);
+                    const fragment = document.createDocumentFragment();
+
+                    words.forEach(word => {
+                        if (word.trim() === '') {
+                            fragment.appendChild(document.createTextNode(word));
+                        } else {
+                            const span = document.createElement('span');
+                            span.className = isAccent ? 'word accent' : 'word';
+                            span.textContent = word;
+                            fragment.appendChild(span);
+                        }
+                    });
+                    return fragment;
+                } else if (node.nodeType === 1) { // Element node
+                    if (node.tagName === 'BR') return null;
+
+                    const accent = isAccent || node.classList.contains('accent-phrase');
+                    const children = Array.from(node.childNodes);
+                    children.forEach(child => {
+                        const wrapped = wrapNode(child, accent);
+                        if (wrapped) node.replaceChild(wrapped, child);
+                    });
+                    return null;
+                }
+                return null;
+            };
+
+            // Process child nodes
+            Array.from(p.childNodes).forEach(child => {
+                const wrapped = wrapNode(child);
+                if (wrapped) p.replaceChild(wrapped, child);
+            });
+        });
+
+        // Cache positions relative to the scroll container
+        cacheWordOffsets();
+    };
+
+    const cacheWordOffsets = () => {
+        const words = scroller.querySelectorAll('.word');
+        wordData = Array.from(words).map(el => ({
+            el: el,
+            offsetTop: el.offsetTop
+        }));
+    };
+
+    const updateSection2Effects = (vh, isMobile) => {
+        if (!section2 || !scroller) return;
+        const rect = section2.getBoundingClientRect();
+
+        // A. Mask Handling (Vanishing Point Fade)
+        const vanishPoint = isMobile ? vh * 0.16 : vh * 0.14;
+        const featherZone = vh * 0.25;
+        const offset = vanishPoint - rect.top;
+        const mask = `linear-gradient(to bottom, 
+            rgba(0,0,0,0) ${offset}px, 
+            rgba(0,0,0,1) ${offset + featherZone}px)`;
+        scroller.style.webkitMaskImage = mask;
+        scroller.style.maskImage = mask;
+
+        // B. Word Highlighting (Sequential Word-by-Word)
+        // Starts when section reaches midpoint (0.5 vh)
+        const readingLine = vh * 0.6;
+        const totalWords = wordData.length;
+
+        // Calculate scroll progress specifically for highlighting
+        // Start highlighting only when 80% of the screen is covered by Section 2 (vh * 0.20)
+        const startTrigger = vh * 0.20;
+        // Divisor tuned to be faster (0.85) so words highlight before hit the top fade
+        const progress = Math.max(0, Math.min(1, (startTrigger - rect.top) / (rect.height * 0.85)));
+
+        const highlightCount = progress * totalWords;
+
+        wordData.forEach((data, index) => {
+            if (index < highlightCount) {
+                data.el.classList.add('active');
+            } else {
+                data.el.classList.remove('active');
+            }
+        });
+    };
+
+    const updateNavFade = (vh) => {
+        if (!section3 || !navbarLogo || !navbarCta) return;
+        const rect = section3.getBoundingClientRect();
+
+        // Navigation should be fully visible when Section 3 is at the bottom (rect.top == vh)
+        // and fully invisible when Section 3 is at 20% from the top (rect.top == vh * 0.2)
+        // This means it's 80% covered.
+        const fadeStart = vh;
+        const fadeEnd = vh * 0.2;
+
+        const opacity = Math.max(0, Math.min(1, (rect.top - fadeEnd) / (fadeStart - fadeEnd)));
+
+        navbarLogo.style.opacity = opacity;
+        navbarCta.style.opacity = opacity;
+
+        // Disable pointer events when invisible to prevent accidental clicks
+        const pointerEvents = opacity === 0 ? 'none' : 'auto';
+        navbarLogo.style.pointerEvents = pointerEvents;
+        navbarCta.style.pointerEvents = pointerEvents;
+    };
+
+    // --- 3. Centralized Scroll Listener ---
+    const onScroll = () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const scrollY = window.scrollY;
+                const vh = window.innerHeight;
+                const isMobile = window.innerWidth <= 768;
+
+                updateHeroAnimation(scrollY, vh);
+                updateSection2Effects(vh, isMobile);
+                updateNavFade(vh);
+
+                ticking = false;
+            });
+            ticking = true;
+        }
+    };
+
+    // --- 4. Launch Email Logic ---
+    const initLaunchLogic = () => {
+        if (!launchEmailInput || !launchCta) return;
+        const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
         launchCta.addEventListener('click', () => {
-            const email = launchEmailInput.value;
-            if (isValidEmail(email)) {
-                // Success action: 3D Flip Animation
+            if (isValidEmail(launchEmailInput.value)) {
                 launchCta.classList.add('flipped');
-
-                // Clear input
                 launchEmailInput.value = '';
                 launchEmailInput.blur();
-                launchEmailInput.classList.remove('has-text'); // Remove accent border logic
-
-                // Revert after 5 seconds
-                setTimeout(() => {
-                    launchCta.classList.remove('flipped');
-                }, 5000);
-
+                launchEmailInput.classList.remove('has-text');
+                setTimeout(() => launchCta.classList.remove('flipped'), 5000);
             } else {
-                // Error feedback
                 launchEmailInput.style.borderBottomColor = '#ff665a';
                 launchEmailInput.classList.add('shake-animation');
                 setTimeout(() => {
-                    launchEmailInput.style.borderBottomColor = ''; // Revert to CSS control
+                    launchEmailInput.style.borderBottomColor = '';
                     launchEmailInput.classList.remove('shake-animation');
                 }, 1000);
             }
         });
 
-        // Toggle has-text class on input
         launchEmailInput.addEventListener('input', () => {
-            // Ensure any error style is cleared
             launchEmailInput.style.borderBottomColor = '';
-
             if (launchEmailInput.value.trim().length > 0) {
                 launchEmailInput.classList.add('has-text');
             } else {
                 launchEmailInput.classList.remove('has-text');
             }
         });
-    }
+    };
 
-    // Initial trigger in case of page reload at position
-    window.dispatchEvent(new Event('scroll'));
+    // --- 5. Mobile Scroll Friction (Dampening) ---
+    const initMobileFriction = () => {
+        const isMobile = window.innerWidth <= 768;
+        if (!isMobile) return;
+
+        let lastTouchY = 0;
+        const frictionFactor = 0.5; // Dampen scroll by 50%
+
+        window.addEventListener('touchstart', (e) => {
+            lastTouchY = e.touches[0].clientY;
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            const currentTouchY = e.touches[0].clientY;
+            const deltaY = lastTouchY - currentTouchY;
+
+            // Manually scroll by dampened amount
+            window.scrollBy(0, deltaY * frictionFactor);
+
+            lastTouchY = currentTouchY;
+            e.preventDefault(); // Stop standard "slippery" scroll
+        }, { passive: false });
+    };
+
+    // --- Execution ---
+    initSection2();
+    initLaunchLogic();
+    initMobileFriction();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+        if (scroller) cacheWordOffsets();
+        onScroll();
+    });
+
+    // Run initial state
+    onScroll();
 });

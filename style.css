@@ -1,3 +1,11 @@
+.d-break {
+    display: inline;
+}
+
+.m-break {
+    display: none;
+}
+
 :root {
     --primary-color: #fbfaf4;
     --accent-color: #ff665a;
@@ -12,8 +20,7 @@
 }
 
 html {
-    scroll-behavior: smooth;
-    scroll-snap-type: y proximity;
+    /* Direct scroll feel for better sync with highlighting */
 }
 
 body {
@@ -63,14 +70,14 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    z-index: 10;
+    z-index: 9999;
 }
 
 .logo {
     position: fixed;
     top: 1.5rem;
     left: 2.2rem;
-    z-index: 1000;
+    z-index: 9999;
 }
 
 .logo img {
@@ -221,50 +228,52 @@ input[type="email"]:focus {
     position: relative;
     width: 100%;
     min-height: auto;
-    /* Allow extended scrolling */
     background-image: url('assets/section2-bg.png');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    /* Create parallax/fixed effect */
 }
 
+
+
 .scrolling-text-container {
-    width: 70%;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding-top: 50vh;
-    /* Start first line at vertical center */
-    padding-bottom: 40vh;
-    /* Allow text to scroll completely off screen */
+    width: 48vw;
+    margin-left: 24vw;
+    padding-top: 35vh;
+    /* Final shift to match 10vh/12vh vanish points */
+    padding-bottom: 25vh;
     position: relative;
     z-index: 10;
 }
 
 .text-block {
-    margin-bottom: 4rem;
-    /* Spacing between blocks */
-    transition: opacity 0.1s linear, transform 0.1s linear;
-    /* Smooth transition */
-    scroll-snap-align: center;
-    opacity: 0;
-    /* Controlled by JS */
-    text-align: center;
+    margin-bottom: 2rem;
+    text-align: left;
+    opacity: 1;
 }
-
-
 
 .scroll-text {
     font-family: "YuMincho + 36p Kana", "Yu Mincho", "Zen Old Mincho", serif;
-    font-weight: 400;
-    font-size: 2rem;
-    letter-spacing: -0.05em;
-    /* Tight spacing */
+    font-weight: 300;
+    font-size: 2.45rem;
+    letter-spacing: -0.08em;
+    color: #555555;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.word {
+    color: #555555;
+    transition: color 0.15s ease;
+}
+
+.word.active {
     color: #fbfaf4;
-    margin-bottom: 4rem;
-    /* Default spacing within block if not tight */
-    text-transform: lowercase;
+}
+
+.word.accent.active {
+    color: var(--accent-color);
 }
 
 .scroll-text.tight {
@@ -276,12 +285,12 @@ input[type="email"]:focus {
 }
 
 .highlight-text {
-    color: #ff665a;
-    font-weight: 900;
+    color: #555555;
+    font-weight: 300;
 }
 
 .text-large {
-    font-size: 2.5rem;
+    font-size: 2.7rem;
 }
 
 /* Bottom CTA initially hidden */
@@ -292,7 +301,7 @@ input[type="email"]:focus {
     opacity: 0;
     filter: blur(10px);
     pointer-events: none;
-    z-index: 1000;
+    z-index: 9999;
 }
 
 /* Receipt Animation Styles */
@@ -596,5 +605,102 @@ input[type="email"]:focus {
         opacity: 1;
         filter: blur(0);
         transform: translateY(0) scale(1);
+    }
+}
+
+/* Mobile Adaptation */
+@media (max-width: 768px) {
+    .logo {
+        top: 1.2rem;
+        left: 1.5rem;
+    }
+
+    .logo img {
+        height: 28px;
+    }
+
+    .nav-cta {
+        top: 1.2rem;
+        right: 1.5rem;
+        height: 32px;
+        width: 104px;
+        /* Adjusted width for text fit */
+        padding: 0;
+        border-radius: 8px;
+        justify-content: center;
+    }
+
+    .nav-cta .arrow-icon {
+        display: none;
+    }
+
+    .nav-cta span {
+        display: block;
+        font-family: 'Avenir Next', -apple-system, sans-serif;
+        font-weight: 500;
+        color: #091717;
+        font-size: 0.8rem;
+        letter-spacing: -0.01em;
+    }
+
+    .arrow-icon {
+        width: 64px;
+        height: 12px;
+    }
+
+    .hero-section {
+        min-height: 100vh;
+    }
+
+    .hero-content {
+        padding: 0 24px;
+        margin-top: -5vh;
+    }
+
+    .hero-title {
+        font-size: 2.25rem !important;
+        margin-bottom: 2.5rem;
+        line-height: 1.1;
+    }
+
+    .hero-subtext {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .scroll-text {
+        font-size: 1.4rem;
+        /* 2rem * 0.7 */
+        text-align: left;
+        letter-spacing: -0.08em;
+    }
+
+    .text-large {
+        font-size: 1.55rem;
+    }
+
+    .scrolling-text-container {
+        width: 78vw;
+        margin-left: 11vw;
+        padding-top: 40vh;
+        /* Increased for mobile fade room */
+    }
+
+    .text-block {
+        transition: opacity 0.05s linear, transform 0.05s linear;
+        margin-bottom: 2rem;
+    }
+
+    #section-3 .launch-title {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .d-break {
+        display: none;
+    }
+
+    .m-break {
+        display: inline;
     }
 }
