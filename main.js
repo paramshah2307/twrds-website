@@ -1,3 +1,9 @@
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL = "https://sxjuhznyaejkbxjanbiq.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4anVoem55YWVqa2J4amFuYmlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMjYwNzQsImV4cCI6MjA4NDYwMjA3NH0.0gX_H4EIiCIBO9w0Q16zSH_UKRFN5Ld6LzETxHhV4mw";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // twrds-website: main.js
 document.addEventListener('DOMContentLoaded', () => {
     const heroTitle = document.querySelector('.hero-title');
@@ -193,8 +199,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!launchEmailInput || !launchCta) return;
         const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-        launchCta.addEventListener('click', () => {
+        launchCta.addEventListener('click', async () => {
             if (isValidEmail(launchEmailInput.value)) {
+                const email = launchEmailInput.value.trim();
+                await supabase
+                    .from('twrds waitlist')
+                    .insert([{ email, source: 'landing' }])
+                const { error } = await supabase.from('launch_emails').insert({ email });
+                if (error) {
+                    console.error('Error inserting email:', error);
+                }
                 launchCta.classList.add('flipped');
                 launchEmailInput.value = '';
                 launchEmailInput.blur();
